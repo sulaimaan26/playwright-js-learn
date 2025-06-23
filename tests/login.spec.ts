@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/login/login.page";
 import { TestTags } from "../enums/test-tags";
+import { getEnv } from "../config/env.loader";
+import { ENVKEY } from "../enums/env-key";
 
 test("Check login page is loaded", async ({ page }) => {
   await page.goto("/");
@@ -42,9 +44,9 @@ test("Verify able to perform successful login", async ({ page }) => {
   await page.goto("/");
   let loginPage = new LoginPage(page);
   let workSpaceHomePage = await loginPage.login(
-    ".com",
-    "@07"
+    getEnv(ENVKEY.EMAIL),
+    getEnv(ENVKEY.PASSWORD)
   );
 
-  await workSpaceHomePage.isGreetingMessageDisplayed("Mohamed Sukaimaan");
+  await workSpaceHomePage.isGreetingMessageDisplayed(getEnv(ENVKEY.USERNAME));
 });

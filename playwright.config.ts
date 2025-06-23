@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import { TestTags } from "./enums/test-tags";
+import "dotenv/config";
 
 /**
  * Read environment variables from file.
