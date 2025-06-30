@@ -78,9 +78,19 @@ jobs:
   
         - name: Install Playwright Browsers
           run: npx playwright install --with-deps
+
+        - name: Load .env to GitHub ENV
+          run: |
+            if [ -f .env ]; then
+              echo "Loading .env values..."
+              cat .env >> $GITHUB_ENV
+            fi
   
         - name: Run Playwright tests
-          run: npx playwright test --grep @pipeline-test
+          env:
+          # These override or supplement .env file values
+            BASE_URL: http://localhost
+          run: npx playwright test --grep "@pipeline-test"
   
         # Optional: Upload test report
         # - name: Upload HTML Report
