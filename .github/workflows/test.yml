@@ -1,0 +1,38 @@
+name: Plane App Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  plane-setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Make setup.sh executable
+        run: chmod +x setup.sh
+
+      - name: Install Plane
+        run: ./setup.sh install
+
+      - name: Start Plane
+        run: ./setup.sh start
+
+      - name: Wait for Plane API to start
+        run: |
+          echo "Waiting for Plane API to become available..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8000/ > /dev/null; then
+              echo "Plane API is up ✅"
+              exit 0
+            fi
+            echo "Waiting ($i/30)..."
+            sleep 5
+          done
+          echo "❌ Plane API did not start in time"
+          exit 1
