@@ -59,64 +59,59 @@ jobs:
             exit 1
           fi
   
-  playwright:
-      name: Playwright Tests
-      runs-on: ubuntu-latest
-      needs: plane
   
-      steps:
-        - name: Checkout repo
-          uses: actions/checkout@v3
-          
-        - name: Restore npm cache
-          uses: actions/cache@v3
-          with:
-            path: |
-              ~/.npm
-              node_modules
-            key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-npm-
+      # - name: Checkout repo
+      #   uses: actions/checkout@v3
+        
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
 
-        - name: Restore Playwright browser cache
-          uses: actions/cache@v3
-          with:
-            path: ~/.cache/ms-playwright
-            key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-playwright-
-  
-        - name: Setup Node.js
-          uses: actions/setup-node@v4
-          with:
-            node-version: lts/*
-  
-        - name: Install dependencies
-          run: npm ci
-  
-        - name: Install Playwright Browsers
-          run: npx playwright install --with-deps
+      - name: Restore Playwright browser cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
-        - name: Load .env to GitHub ENV
-          run: |
-            if [ -f .env ]; then
-              echo "Loading .env values..."
-              cat .env >> $GITHUB_ENV
-            fi
-  
-        - name: Run Playwright tests
-          env:
-          # These override or supplement .env file values
-            EMAIL: df@gmail.com
-            PASSWORD: fds
-            USER_NAME: fds
-            WORKSPACE_HOST: localhost/
-          run: |
-            npx playwright test --grep @pipeline-test
-  
-        # Optional: Upload test report
-        # - name: Upload HTML Report
-        #   uses: actions/upload-artifact@v4
-        #   with:
-        #     name: playwright-report
-        #     path: playwright-report/
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Load .env to GitHub ENV
+        run: |
+          if [ -f .env ]; then
+            echo "Loading .env values..."
+            cat .env >> $GITHUB_ENV
+          fi
+
+      - name: Run Playwright tests
+        env:
+        # These override or supplement .env file values
+          EMAIL: df@gmail.com
+          PASSWORD: fds
+          USER_NAME: fds
+          WORKSPACE_HOST: localhost/
+        run: |
+          npx playwright test --grep @pipeline-test
+
+      # Optional: Upload test report
+      # - name: Upload HTML Report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: playwright-report
+      #     path: playwright-report/
