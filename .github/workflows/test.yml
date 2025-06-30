@@ -7,6 +7,9 @@ jobs:
   plane:
     runs-on: ubuntu-latest
 
+    outputs:
+      ranStart: ${{ steps.checkStart.outputs.ran }}
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
