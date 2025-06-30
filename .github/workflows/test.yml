@@ -90,7 +90,7 @@ jobs:
           env:
           # These override or supplement .env file values
             BASE_URL: http://localhost
-          run: npx playwright test --grep "@pipeline-test"
+          run: npx playwright test --grep '@pipeline-test'
   
         # Optional: Upload test report
         # - name: Upload HTML Report
