@@ -5,7 +5,7 @@ import { getEnv } from "../config/env.loader";
 import { ENVKEY } from "../enums/env-key";
 import { InvalidEmailId } from "../data/login/login.data";
 
-test(
+test.only(
   "Check login page is loaded",
   { tag: [TestTags.PRIORITY_HIGH, TestTags.PIPELINE_TEST] },
   async ({ page }) => {
