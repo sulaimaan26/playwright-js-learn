@@ -7,7 +7,7 @@ import { InvalidEmailId } from "../data/login/login.data";
 
 test(
   "Check login page is loaded",
-  { tag: TestTags.PRIORITY_HIGH },
+  { tag: [TestTags.PRIORITY_HIGH, TestTags.PIPELINE_TEST] },
   async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle(/Log in/);

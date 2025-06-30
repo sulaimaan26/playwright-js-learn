@@ -5,4 +5,5 @@ export enum TestTags {
   EndToEnd = "@E2E",
   POSITIVE = "@positive",
   PRIORITY_MEDIUM = "@priority-medium",
+  PIPELINE_TEST = "@pipeline-test",
 }
