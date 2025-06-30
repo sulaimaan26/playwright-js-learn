@@ -44,6 +44,7 @@ jobs:
           done
           echo "❌ Plane API did not start in time"
           exit 1
+          
       - name: Smoke test
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/)
