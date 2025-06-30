@@ -16,6 +16,14 @@ jobs:
 
       - name: Make setup.sh executable
         run: chmod +x setup.sh
+        
+      - name: Cache Plane installation
+        uses: actions/cache@v3
+        with:
+          path: plane-app
+          key: ${{ runner.os }}-plane-${{ hashFiles('setup.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-plane-
 
       - name: Install Plane
         run: ./setup.sh install
