@@ -44,3 +44,13 @@ jobs:
           done
           echo "❌ Plane API did not start in time"
           exit 1
+      - name: Smoke test
+        if: ${{ github.event.inputs.action == 'start' }}
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/)
+          if [ "$STATUS" -eq 200 ]; then
+            echo "✅ Plane API responded OK"
+          else
+            echo "❌ API returned $STATUS"
+            exit 1
+          fi
