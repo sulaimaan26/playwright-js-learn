@@ -33,6 +33,10 @@ jobs:
 
       - name: Start Plane
         run: ./setup.sh start
+      
+      - name: Check if action was 'start'
+        id: checkStart
+        run: echo "ran=${{ github.event.inputs.action == 'start' }}" >> $GITHUB_OUTPUT
 
       - name: Wait for Plane API to start
         run: |
