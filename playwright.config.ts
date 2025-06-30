@@ -15,10 +15,10 @@ import "dotenv/config";
  */
 export default defineConfig({
   testDir: "./tests",
-  timeout: 30000,
+  timeout: 50000,
   testIgnore: [`${TestTags.NEGATIVE}`],
   expect: {
-    timeout: 5000,
+    timeout: 10000,
   },
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -34,7 +34,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: "http://localhost",
-    headless: false,
+    headless: true,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
 

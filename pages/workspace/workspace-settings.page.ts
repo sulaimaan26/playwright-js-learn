@@ -1,13 +1,16 @@
-import { Locator, Page } from "@playwright/test";
+import { expect, Locator, Page } from "@playwright/test";
 import { AlertNotification } from "../../component/alert-notification";
 import { Dropdown } from "../../component/dropdown";
+import { PeopleCount } from "../../enums/workspace/people-count";
+import { HeaderSection } from "./sections/header.section";
 
 export class WorkspaceSettings {
-  private page: Page;
+  public readonly header: HeaderSection;
   private secondDeleteWorkspace: Locator;
-  private workSpaceName: Locator;
+  private workSpaceNameField: Locator;
   private companySizeDropdown: Dropdown;
-  private workSpaceURL: Locator;
+  private workSpaceURLField: Locator;
+  private updateWorkSpaceButton: Locator;
 
   // For delete popup
   private deleteWorkspace: Locator;
@@ -15,14 +18,21 @@ export class WorkspaceSettings {
   private deleteConfirmationField: Locator;
   private deleteConfirmButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
-    this.workSpaceName = page.getByRole("textbox", { name: "Workspace name" });
+  constructor(private page: Page) {
+    this.header = new HeaderSection(page);
+    this.workSpaceNameField = page.getByRole("textbox", {
+      name: "Workspace name",
+    });
     this.companySizeDropdown = new Dropdown(
-      page.getByRole("button", { name: "Company size" }),
+      page.locator(
+        "//h4[contains(text(),'Company size')]/following-sibling::div//button"
+      ),
       page
     );
-    this.workSpaceURL = page.locator("#url");
+    this.workSpaceURLField = page.locator("#url");
+    this.updateWorkSpaceButton = page.getByRole("button", {
+      name: "Update workspace",
+    });
 
     this.deleteWorkspace = page.getByRole("button", {
       name: "Delete this workspace",
@@ -56,13 +66,30 @@ export class WorkspaceSettings {
   }
 
   async getWorkSpaceInfo() {
-    // let companySize = await this.companySizeDropdown.getValue();
-    let workspaceName = await this.workSpaceName.inputValue();
-    let workspaceUrl = await this.workSpaceURL.inputValue();
+    let companySize = await this.companySizeDropdown.getValue();
+    let workspaceName = await this.workSpaceNameField.inputValue();
+    let workspaceUrl = await this.workSpaceURLField.inputValue();
     return {
       workspaceName,
-      companySize: "",
+      companySize,
       workspaceUrl,
     };
+  }
+
+  async enterWorkspaceName(name: string) {
+    await this.workSpaceNameField.fill(name);
+  }
+
+  async selectCompanySize(value: PeopleCount) {
+    await this.companySizeDropdown.selectOption(value);
+  }
+
+  async isWorkspaceURLDisabled() {
+    await expect(this.workSpaceURLField).toBeDisabled();
+  }
+
+  async updateWorkspace() {
+    await this.updateWorkSpaceButton.click();
+    return new AlertNotification(this.page);
   }
 }

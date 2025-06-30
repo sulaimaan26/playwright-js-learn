@@ -1,8 +1,8 @@
 import { expect, Locator, Page } from "@playwright/test";
 
 export class AlertNotification {
-  page: Page;
-  alertSection: Locator;
+  private page: Page;
+  private alertSection: Locator;
 
   constructor(page: Page) {
     this.page = page;

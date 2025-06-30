@@ -1,25 +1,19 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { MenuSection } from "./sections/menu.section";
+import { HeaderSection } from "./sections/header.section";
 
 export class WorkSpaceHomePage {
   readonly page: Page;
-  readonly menuButton: Locator;
+  public readonly header: HeaderSection;
 
   constructor(page: Page) {
     this.page = page;
-    this.menuButton = page.locator(
-      "//button[contains(@class,'group/menu-button')]"
-    );
+    this.header = new HeaderSection(page);
   }
 
   async isGreetingMessageDisplayed(message: string) {
     await expect(
       this.page.getByRole("heading", { name: message })
     ).toBeVisible();
-  }
-
-  async clickMenu() {
-    await this.menuButton.click();
-    return new MenuSection(this.page);
   }
 }

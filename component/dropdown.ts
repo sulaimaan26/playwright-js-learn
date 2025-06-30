@@ -11,7 +11,7 @@ export class Dropdown {
 
   async selectOption(option: string) {
     await this.locator.click();
-    await this.page.getByText(option).click();
+    await this.page.locator(`//li[contains(text(),'${option}')]`).click();
   }
 
   async getValue() {

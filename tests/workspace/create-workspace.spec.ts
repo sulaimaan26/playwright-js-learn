@@ -7,6 +7,7 @@ import { ENVKEY } from "../../enums/env-key";
 import { TestTags } from "../../enums/test-tags";
 import { PeopleCount } from "../../enums/workspace/people-count";
 import { expect, test } from "../../fixtures/home-page.fixture";
+import { RandomData } from "../../util/random-data.util";
 
 const workspaceHost = getEnv(ENVKEY.WORKSPACE_HOST);
 
@@ -16,19 +17,20 @@ test(
   async ({ workspaceHome }) => {
     //creating workspace
     let createWorkspace = await (
-      await workspaceHome.clickMenu()
+      await workspaceHome.header.clickMenu()
     ).clickCreateWorkspace();
     let workspaceName = "temp";
+    let peopleCount = PeopleCount.TWO_TEN;
     let alertMessage = await createWorkspace.createWorkspace(
       workspaceName,
-      PeopleCount.TWO_TEN
+      peopleCount
     );
     await alertMessage.isExpectedMessageDisplayed(
       "Workspace created successfully"
     );
 
     let workspaceSettings = await (
-      await workspaceHome.clickMenu()
+      await workspaceHome.header.clickMenu()
     ).clickSettingsButton();
 
     //Getting workspace info for future assertion
@@ -42,6 +44,7 @@ test(
 
     //Assereting created data
     expect(workspaceInfo.workspaceName).toEqual(workspaceName);
+    expect(workspaceInfo.companySize).toEqual(peopleCount);
     expect(workspaceInfo.workspaceUrl).toEqual(workspaceHost + workspaceName);
   }
 );
@@ -56,23 +59,25 @@ test(
 
 //TODO: Convert workspace creation to API
 test("Verify whether there is proper message for  a workspace created with duplicate url", async ({
-  workspaceHome,
+  workspaceSettings,
 }) => {
+  const workspaceSettingsPage =workspaceSettings.workspaceSettingPage
+  const workspaceName  =workspaceSettings.workSpaceName
   //creating workspace
-  let createWorkspace = await (
-    await workspaceHome.clickMenu()
-  ).clickCreateWorkspace();
-  let workspaceName = "duplicate-workspace";
-  let alertMessage = await createWorkspace.createWorkspace(
-    workspaceName,
-    PeopleCount.TWO_TEN
-  );
-  await alertMessage.isExpectedMessageDisplayed(
-    "Workspace created successfully"
-  );
+  // let createWorkspace = await (
+  //   await workspaceHome.header.clickMenu()
+  // ).clickCreateWorkspace();
+  // let workspaceName = "duplicate-work" + RandomData.getRandomString(3);
+  // let alertMessage = await createWorkspace.createWorkspace(
+  //   workspaceName,
+  //   PeopleCount.TWO_TEN
+  // );
+  // await alertMessage.isExpectedMessageDisplayed(
+  //   "Workspace created successfully"
+  // );
 
-  createWorkspace = await (
-    await workspaceHome.clickMenu()
+  const createWorkspace = await (
+    await workspaceSettingsPage.header.clickMenu()
   ).clickCreateWorkspace();
 
   await createWorkspace.enterWorkspaceName(workspaceName);
@@ -81,17 +86,17 @@ test("Verify whether there is proper message for  a workspace created with dupli
   await createWorkspace.isFieldErrorMessageDisplayed(
     "Workspace URL is already taken!"
   );
-  await createWorkspace.goBack();
+  // await createWorkspace.goBack();
 
   //post-cleanup
   //TODO: Convert post-cleanup to API
-  let workspaceSettings = await (
-    await workspaceHome.clickMenu()
-  ).clickSettingsButton();
-  let deleteAlertMessage = await workspaceSettings.handleDeleteWorkspace(
-    workspaceName
-  );
-  await deleteAlertMessage.isExpectedMessageDisplayed("Workspace deleted.");
+  // let workspaceSettings = await (
+  //   await workspaceHome.header.clickMenu()
+  // ).clickSettingsButton();
+  // let deleteAlertMessage = await workspaceSettings.handleDeleteWorkspace(
+  //   workspaceName
+  // );
+  // await deleteAlertMessage.isExpectedMessageDisplayed("Workspace deleted.");
 });
 
 test.describe.parallel("Workspace name validation", () => {
