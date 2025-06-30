@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "Waiting for Plane API to become available..."
           for i in {1..30}; do
-            if curl -s http://localhost:8000/ > /dev/null; then
+            if curl -s http://localhost/ > /dev/null; then
               echo "Plane API is up ✅"
               exit 0
             fi
