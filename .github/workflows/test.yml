@@ -107,7 +107,10 @@ jobs:
         - name: Run Playwright tests
           env:
           # These override or supplement .env file values
-            BASE_URL: http://localhost
+            EMAIL: df@gmail.com
+            PASSWORD: fds
+            USER_NAME: fds
+            WORKSPACE_HOST: localhost/
           run: |
             npx playwright test --grep @pipeline-test
   
