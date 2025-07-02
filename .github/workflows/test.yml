@@ -63,11 +63,10 @@ jobs:
         id: get_csrf
         run: |
           echo "Getting CSRF token..."
-          curl -i -s -c cookies.txt http://localhost/auth/get-csrf-token/ -o response.json
-          CSRF_TOKEN=$(jq -r '.csrf_token' response.json)
-          echo "CSRF: $CSRF_TOKEN"
+          curl -s -c cookies.txt http://localhost/auth/get-csrf-token/ -o response.json
+          cat response.json
           
-          # Save to GitHub Actions ENV for next steps
+          CSRF_TOKEN=$(jq -r '.csrf_token' response.json)
           echo "CSRF_TOKEN=$CSRF_TOKEN" >> $GITHUB_ENV
 
         
