@@ -58,10 +58,18 @@ jobs:
             echo "❌ API returned $STATUS"
             exit 1
           fi
-  
-  
-      # - name: Checkout repo
-      #   uses: actions/checkout@v3
+
+      - name: Get CSRF Token
+        id: get_csrf
+        run: |
+          echo "Getting CSRF token..."
+          curl -i -s -c cookies.txt http://localhost/auth/get-csrf-token/ -o response.json
+          CSRF_TOKEN=$(jq -r '.csrf_token' response.json)
+          echo "CSRF: $CSRF_TOKEN"
+          
+          # Save to GitHub Actions ENV for next steps
+          echo "CSRF_TOKEN=$CSRF_TOKEN" >> $GITHUB_ENV
+
         
       - name: Restore npm cache
         uses: actions/cache@v3
