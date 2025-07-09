@@ -76,7 +76,7 @@ export class AdminService {
   ): Promise<IAPIResponse<void>> {
     return request.fetch(`/api/instances/admins/sign-in/`, {
       method: "POST",
-      maxRedirects: 0,
+      // maxRedirects: 0,
       form: formData,
     });
   }
