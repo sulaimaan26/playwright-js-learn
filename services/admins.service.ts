@@ -10,7 +10,7 @@ export class AdminService {
 
   async signUpAdminUser(data: SignUpRequest): Promise<IAPIResponse<void>> {
     // /api/instances/admins/sign-up/
-    const response = await this.request.fetch(`/auth/sign-up/`, {
+    const response = await this.request.fetch(`/api/instances/admins/sign-up/`, {
       method: "POST",
       maxRedirects: 0,
       multipart: {
