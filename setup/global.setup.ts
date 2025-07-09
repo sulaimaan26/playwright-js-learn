@@ -44,7 +44,7 @@ async function globalSetup(config: FullConfig) {
     password: data.password,
   });
   await expect(loginRes).toBeOK();
-
+  adminService = new AdminService(requestContext);
   console.log("Created Admin successfully");
   console.table(data);
 
