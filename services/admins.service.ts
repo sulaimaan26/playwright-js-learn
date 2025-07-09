@@ -8,9 +8,23 @@ import { UpdateMeResponse } from "../model/admin/path-me.response";
 export class AdminService {
   constructor(private request: APIRequestContext) {}
 
+  async instancesSignUp(data: SignUpRequest): Promise<IAPIResponse<void>> {
+    const response = await this.request.fetch(
+      `/api/instances/admins/sign-up/`,
+      {
+        method: "POST",
+        maxRedirects: 0,
+        multipart: {
+          ...data,
+        },
+      }
+    );
+
+    return response;
+  }
+
   async signUpAdminUser(data: SignUpRequest): Promise<IAPIResponse<void>> {
-    // /api/instances/admins/sign-up/
-    const response = await this.request.fetch(`/api/instances/admins/sign-up/`, {
+    const response = await this.request.fetch(`/auth/sign-up/`, {
       method: "POST",
       maxRedirects: 0,
       multipart: {
@@ -50,5 +64,20 @@ export class AdminService {
     });
 
     return response;
+  }
+
+  async instancesSignIn(
+    request: APIRequestContext,
+    formData: {
+      csrfmiddlewaretoken: string;
+      email: string;
+      password: string;
+    }
+  ): Promise<IAPIResponse<void>> {
+    return request.fetch(`/api/instances/admins/sign-in/`, {
+      method: "POST",
+      maxRedirects: 0,
+      form: formData,
+    });
   }
 }

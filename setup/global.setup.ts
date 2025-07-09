@@ -34,11 +34,11 @@ async function globalSetup(config: FullConfig) {
     confirm_password: password,
   };
   console.log("Creating Admin....");
-  let res = await adminService.signUpAdminUser(data);
+  let res = await adminService.instancesSignUp(data);
   await expect(res.status()).toBe(302);
 
   //Login with created user
-  let loginRes = await authService.signIn(requestContext, {
+  let loginRes = await adminService.instancesSignIn(requestContext, {
     csrfmiddlewaretoken: authRes.csrf_token,
     email: data.email,
     password: data.password,
