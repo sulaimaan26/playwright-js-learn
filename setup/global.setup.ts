@@ -38,6 +38,11 @@ async function globalSetup(config: FullConfig) {
   await expect(res.status()).toBe(302);
 
   //Login with created user
+  authContext = await authService.getCSRFToken();
+  await expect(authContext.response).toBeOK();
+  authRes = await authContext.response.json();
+  requestContext = authContext.requestContext;
+
   let loginRes = await adminService.instancesSignIn(requestContext, {
     csrfmiddlewaretoken: authRes.csrf_token,
     email: data.email,
