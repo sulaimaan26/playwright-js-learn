@@ -3,4 +3,5 @@ export enum ENVKEY {
   PASSWORD = "PASSWORD",
   USERNAME = "USER_NAME",
   WORKSPACE_HOST = "WORKSPACE_HOST",
+  CI = "CI",
 }

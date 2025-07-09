@@ -60,9 +60,12 @@ test(
 //TODO: Convert workspace creation to API
 test("Verify whether there is proper message for  a workspace created with duplicate url", async ({
   workspaceSettings,
+  page,
 }) => {
-  const workspaceSettingsPage =workspaceSettings.workspaceSettingPage
-  const workspaceName  =workspaceSettings.workSpaceName
+  await page.goto("/");
+
+  const workspaceSettingsPage = workspaceSettings.workspaceSettingPage;
+  const workspaceName = workspaceSettings.workSpaceName;
   //creating workspace
   // let createWorkspace = await (
   //   await workspaceHome.header.clickMenu()

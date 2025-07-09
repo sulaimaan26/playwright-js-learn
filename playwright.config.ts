@@ -14,6 +14,7 @@ import "dotenv/config";
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  globalSetup: require.resolve('./setup/global.setup'),
   testDir: "./tests",
   timeout: 50000,
   testIgnore: [`${TestTags.NEGATIVE}`],
@@ -34,7 +35,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: "http://localhost",
-    headless: true,
+    headless: false,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
 

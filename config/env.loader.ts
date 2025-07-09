@@ -8,4 +8,8 @@ const getEnv = (key: ENVKEY): string => {
   return env;
 };
 
-export { getEnv };
+const setEnv = (key: ENVKEY, value: string) => {
+  process.env[key] = value;
+};
+
+export { getEnv, setEnv };
