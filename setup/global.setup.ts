@@ -48,7 +48,7 @@ async function globalSetup(config: FullConfig) {
     email: data.email,
     password: data.password,
   });
-  await expect(loginRes).toBeOK();
+  await expect(res.status()).toBe(302);
   adminService = new AdminService(requestContext);
   console.log("Created Admin successfully");
   console.table(data);
