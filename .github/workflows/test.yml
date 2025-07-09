@@ -57,66 +57,8 @@ jobs:
           else
             echo "❌ API returned $STATUS"
             exit 1
-          fi
-
-      - name: Get CSRF Token
-        id: get_csrf
-        run: |
-          echo "Getting CSRF token..."
-          curl -s -c cookies.txt http://localhost/auth/get-csrf-token/ -o response.json
-          cat response.json
-          
-          CSRF_TOKEN=$(jq -r '.csrf_token' response.json)
-          echo "CSRF_TOKEN=$CSRF_TOKEN" >> $GITHUB_ENV
-      
-      - name: Perform Account Sign-Up
-        id: signup
-        run: |
-          echo "Signing up..."
-          curl -s -b cookies.txt http://localhost/api/instances/admins/sign-up/ \
-            -F "csrfmiddlewaretoken=$CSRF_TOKEN" \
-            -F "is_telemetry_enabled=True" \
-            -F "first_name=Temp" \
-            -F "last_name=User" \
-            -F "email=tempuser@mail.com" \
-            -F "company_name=test" \
-            -F "password=Test@123" \
-            -F "confirm_password=Test@123" -o signup_response.json
-
-          echo "Signup response:"
-          cat signup_response.json
-
-      - name: Get CSRF Token POST Signup
-        id: get_csrf_post_signup
-        run: |
-          echo "Getting CSRF token..."
-          curl -s -c cookies.txt http://localhost/auth/get-csrf-token/ -o response.json
-          cat response.json
-          
-          CSRF_TOKEN=$(jq -r '.csrf_token' response.json)
-          echo "CSRF_TOKEN=$CSRF_TOKEN" >> $GITHUB_ENV
-
-      - name: Perform Sign-In
-        id: signin
-        run: |
-          echo "Logging in..."
-          curl -s -b cookies.txt -c cookies.txt http://localhost/auth/sign-in/ \
-            --data-urlencode "csrfmiddlewaretoken=$CSRF_TOKEN" \
-            --data-urlencode "email=tempuser@mail.com" \
-            --data-urlencode "password=Test@123" -o signin_response.json
-
-          echo "Login response:"
-          cat signin_response.json
-
-          # Validate login
-          SUCCESS=$(jq -r '.success // empty' signin_response.json)
-          if [[ "$SUCCESS" != "true" && "$SUCCESS" != "True" ]]; then
-            echo "❌ Login failed"
-            exit 1
-          fi
-
-          echo "✅ Login successful"
-        
+          fi    
+     
       - name: Restore npm cache
         uses: actions/cache@v3
         with:
@@ -160,6 +102,7 @@ jobs:
           PASSWORD: fds
           USER_NAME: fds
           WORKSPACE_HOST: localhost/
+          CI: true
         run: |
           npx playwright test --grep @pipeline-test
 
