@@ -31,9 +31,9 @@ jobs:
       - name: Start Plane
         run: ./setup.sh start
       
-      - name: Check if action was 'start'
-        id: checkStart
-        run: echo "ran=${{ github.event.inputs.action == 'start' }}" >> $GITHUB_OUTPUT
+      # - name: Check if action was 'start'
+      #   id: checkStart
+      #   run: echo "ran=${{ github.event.inputs.action == 'start' }}" >> $GITHUB_OUTPUT
 
       - name: Wait for Plane API to start
         run: |
@@ -98,11 +98,9 @@ jobs:
       - name: Run Playwright tests
         env:
         # These override or supplement .env file values
-          EMAIL: df@gmail.com
-          PASSWORD: fds
-          USER_NAME: fds
           WORKSPACE_HOST: localhost/
           CI: true
+          DEFAULT_WORKSPACE_NAME: my-workspace
         run: |
           npx playwright test --grep @pipeline-test
 
