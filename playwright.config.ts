@@ -40,7 +40,7 @@ export default defineConfig({
     trace: "on-first-retry",
 
     launchOptions: {
-      args: ["--start-maximized"],
+      args: ["--start-maximized", "--window-size=1920,1080"],
     },
   },
 
