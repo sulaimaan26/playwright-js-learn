@@ -37,9 +37,6 @@ jobs:
       #     fi
       - name: Install Plane
         run: ./setup.sh install
-    
-      - name: Check Plane Cache Contents
-        run: ls -R ~/.plane  # Adjust path
 
       - name: Start Plane
         run: ./setup.sh start
