@@ -41,8 +41,9 @@ export class AuthService {
 
   async signIn(
     request: APIRequestContext,
-    formData: { csrfmiddlewaretoken: string; email: string; password: string }
+    formData: { csrfmiddlewaretoken: string; email: string; password: string },
+    maxRedirects = 20
   ): Promise<IAPIResponse<void>> {
-    return request.post(`/auth/sign-in/`, { form: formData });
+    return request.post(`/auth/sign-in/`, { form: formData, maxRedirects });
   }
 }

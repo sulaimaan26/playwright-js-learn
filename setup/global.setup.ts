@@ -1,16 +1,18 @@
-import { chromium, expect, type FullConfig } from "@playwright/test";
+import { expect, type FullConfig } from "@playwright/test";
 import { AuthService } from "../services/auth.service";
-import { AdminService } from "../services/admins.service";
+import { InstancesService } from "../services/instances.service";
 import { SignUpRequest } from "../model/admin/sign-up.request";
 import { faker } from "@faker-js/faker";
 import { getEnv, setEnv } from "../config/env.loader";
 import { ENVKEY } from "../enums/env-key";
 import { WorkSpaceService } from "../services/workspace/workspace.service";
-import { RandomData } from "../util/random-data.util";
+import { UserService } from "../services/user.service";
+import * as fs from "fs";
 
 async function globalSetup(config: FullConfig) {
   if (getEnv(ENVKEY.CI) == "false") return; //only for CI
   console.log("Alert! global setup running ");
+
   //Getting CSRF Token
   let authService = new AuthService();
   let authContext = await authService.getCSRFToken();
@@ -18,8 +20,8 @@ async function globalSetup(config: FullConfig) {
   let authRes = await authContext.response.json();
   let requestContext = authContext.requestContext;
 
-  //Perform signup
-  let adminService = new AdminService(authContext.requestContext);
+  //Perform instance signup
+  let instanceService = new InstancesService(authContext.requestContext);
   const password =
     faker.internet.password({ length: 12, memorable: true }) + "1@A";
 
@@ -34,7 +36,7 @@ async function globalSetup(config: FullConfig) {
     confirm_password: password,
   };
   console.log("Creating Admin....");
-  let res = await adminService.instancesSignUp(data);
+  let res = await instanceService.signUp(data);
   await expect(res.status()).toBe(302);
 
   //Login with created user
@@ -43,29 +45,34 @@ async function globalSetup(config: FullConfig) {
   authRes = await authContext.response.json();
   requestContext = authContext.requestContext;
 
-  let loginRes = await adminService.instancesSignIn(requestContext, {
-    csrfmiddlewaretoken: authRes.csrf_token,
-    email: data.email,
-    password: data.password,
-  });
+  let loginRes = await authService.signIn(
+    requestContext,
+    {
+      csrfmiddlewaretoken: authRes.csrf_token,
+      email: data.email,
+      password: data.password,
+    },
+    0
+  );
   await expect(loginRes.status()).toBe(302);
-  adminService = new AdminService(requestContext);
+  const userService = new UserService(requestContext);
   console.log("Created Admin successfully");
   console.table(data);
 
-  let profileRes = await adminService.updateProfile({
+  //Perform onboarding
+  let profileRes = await userService.updateProfile({
     role: "Individual contributor",
     use_case: "Engineering",
   });
   await expect(profileRes).toBeOK();
 
-  let updateMeProfileRes = await adminService.updateMe({
+  let updateMeProfileRes = await userService.updateMe({
     first_name: data.first_name,
     last_name: data.last_name,
   });
   await expect(updateMeProfileRes).toBeOK();
 
-  profileRes = await adminService.updateProfile({
+  profileRes = await userService.updateProfile({
     onboarding_step: {
       profile_complete: true,
       workspace_create: false,
@@ -77,7 +84,7 @@ async function globalSetup(config: FullConfig) {
 
   //creating workspace
   let workSpaceService = new WorkSpaceService(requestContext);
-  let name = "Global" + RandomData.getRandomString();
+  let name = getEnv(ENVKEY.DEFAULT_WORKSPACE_NAME);
 
   let workspaceRes = await workSpaceService.createWorkspace({
     name,
@@ -88,13 +95,15 @@ async function globalSetup(config: FullConfig) {
   await expect(workspaceRes).toBeOK();
 
   //update tour status
-  let tourRes = await adminService.updateTourStatus();
+  let tourRes = await userService.updateTourStatus();
   await expect(tourRes).toBeOK();
 
   console.log("Setting up env data: ");
   setEnv(ENVKEY.EMAIL, data.email);
   setEnv(ENVKEY.PASSWORD, data.password);
   setEnv(ENVKEY.USERNAME, data.first_name + " " + data.last_name);
+
+  fs.writeFileSync(".tmp", JSON.stringify(data));
 }
 
 export default globalSetup;
