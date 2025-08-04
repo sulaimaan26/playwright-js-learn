@@ -4,13 +4,12 @@ BRANCH=${BRANCH:-master}
 SCRIPT_DIR=$PWD
 SERVICE_FOLDER=plane-app
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
-# export APP_RELEASE=stable
-export APP_RELEASE=0.27.1
+export APP_RELEASE=stable
 export DOCKERHUB_USER=artifacts.plane.so/makeplane
 export PULL_POLICY=${PULL_POLICY:-if_not_present}
 export GH_REPO=makeplane/plane
 export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
-export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deploy/selfhost"
+export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deployments/cli/community"
 
 CPU_ARCH=$(uname -m)
 OS_NAME=$(uname)
@@ -58,7 +57,7 @@ function spinner() {
 
 function checkLatestRelease(){
     echo "Checking for the latest release..." >&2
-    local latest_release=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
+    local latest_release=$(curl -fsSL https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
     if [ -z "$latest_release" ]; then
         echo "Failed to check for the latest release. Exiting..." >&2
         exit 1
@@ -197,7 +196,7 @@ function buildYourOwnImage(){
     REPO=https://github.com/$GH_REPO.git
     git clone "$REPO" "$PLANE_TEMP_CODE_DIR"  --branch "$BRANCH" --single-branch --depth 1
 
-    cp "$PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
+    cp "$PLANE_TEMP_CODE_DIR/deployments/cli/community/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
 
     cd "$PLANE_TEMP_CODE_DIR" || exit
 
@@ -248,7 +247,7 @@ function download() {
         mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
     fi
 
-    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml?$(date +%s)")
+    RESPONSE=$(curl -fsSL -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml?$(date +%s)")
     BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
     STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
@@ -256,7 +255,7 @@ function download() {
         echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
     else
         # Fallback to download from the raw github url
-        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/docker-compose.yml?$(date +%s)")
+        RESPONSE=$(curl -fsSL -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/docker-compose.yml?$(date +%s)")
         BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
         STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
@@ -270,7 +269,7 @@ function download() {
         fi
     fi
 
-    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env?$(date +%s)")
+    RESPONSE=$(curl -fsSL -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env?$(date +%s)")
     BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
     STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
@@ -278,7 +277,7 @@ function download() {
         echo "$BODY" > $PLANE_INSTALL_DIR/variables-upgrade.env
     else
         # Fallback to download from the raw github url
-        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/variables.env?$(date +%s)")
+        RESPONSE=$(curl -fsSL -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/variables.env?$(date +%s)")
         BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
         STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
