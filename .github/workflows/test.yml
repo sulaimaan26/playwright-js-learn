@@ -27,9 +27,11 @@ jobs:
 
       - name: Install Plane
         run: |
-          if [ ! -f ~/.plane/.installed ]; then  # Adjust path
+          INSTALL_DIR="$HOME/.plane"
+          if [ ! -f "$INSTALL_DIR/.installed" ]; then
             ./setup.sh install
-            touch ~/.plane/.installed  # Create a flag file after install
+            mkdir -p "$INSTALL_DIR"
+            touch "$INSTALL_DIR/.installed"
           else
             echo "Plane is already installed. Skipping installation."
           fi
