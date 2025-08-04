@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Make setup.sh executable
         run: chmod +x setup.sh
@@ -20,13 +20,22 @@ jobs:
       - name: Cache Plane installation
         uses: actions/cache@v3
         with:
-          path: plane-app
-          key: ${{ runner.os }}-plane-${{ hashFiles('setup.sh') }}
+          path: ~/.plane  # Replace with the actual Plane install path
+          key: ${{ runner.os }}-plane-cache-v1
           restore-keys: |
             ${{ runner.os }}-plane-
 
       - name: Install Plane
-        run: ./setup.sh install
+        run: |
+          if [ ! -f ~/.plane/.installed ]; then  # Adjust path
+            ./setup.sh install
+            touch ~/.plane/.installed  # Create a flag file after install
+          else
+            echo "Plane is already installed. Skipping installation."
+          fi
+    
+      - name: Check Plane Cache Contents
+        run: ls -R ~/.plane  # Adjust path
 
       - name: Start Plane
         run: ./setup.sh start
@@ -101,6 +110,7 @@ jobs:
           WORKSPACE_HOST: localhost/
           CI: true
           DEFAULT_WORKSPACE_NAME: my-workspace
+          RUN_GLOBAL_SETUP: true
         run: |
           npx playwright test --grep @pipeline-test
 

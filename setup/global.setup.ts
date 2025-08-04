@@ -10,7 +10,7 @@ import { UserService } from "../services/user.service";
 import * as fs from "fs";
 
 async function globalSetup(config: FullConfig) {
-  if (getEnv(ENVKEY.CI) == "false") return; //only for CI
+  if (getEnv(ENVKEY.RUN_GLOBAL_SETUP) == "false") return; //only for CI
   console.log("Alert! global setup running ");
 
   //Getting CSRF Token
