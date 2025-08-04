@@ -114,7 +114,7 @@ jobs:
           DEFAULT_WORKSPACE_NAME: my-workspace
           RUN_GLOBAL_SETUP: true
         run: |
-          npx playwright test --grep @pipeline-test
+          npx playwright test
 
       # Optional: Upload test report
       # - name: Upload HTML Report
