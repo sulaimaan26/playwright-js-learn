@@ -5,7 +5,7 @@ export class HeaderSection {
   private readonly menuButton: Locator;
 
   constructor(private page: Page) {
-    this.menuButton = page.getByRole('button', { name: 'Open workspace switcher' });
+    this.menuButton = page.getByRole('button', { name: 'Open workspace switcher' }).first();
   }
 
   async clickMenu() {
