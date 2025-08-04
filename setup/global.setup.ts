@@ -12,6 +12,7 @@ import * as fs from "fs";
 async function globalSetup(config: FullConfig) {
   if (getEnv(ENVKEY.RUN_GLOBAL_SETUP) == "false") return; //only for CI
   console.log("Alert! global setup running ");
+  console.log("Running test in CI: "+process.env.CI);
 
   //Getting CSRF Token
   let authService = new AuthService();
