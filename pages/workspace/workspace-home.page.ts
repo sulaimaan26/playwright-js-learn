@@ -1,14 +1,13 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { MenuSection } from "./sections/menu.section";
-import { HeaderSection } from "./sections/header.section";
+import { SideMenuSection } from "../sections/side-menu.section";
 
 export class WorkSpaceHomePage {
-  readonly page: Page;
-  public readonly header: HeaderSection;
+  private readonly page: Page;
+  public readonly sideMenuSection: SideMenuSection;
 
   constructor(page: Page) {
     this.page = page;
-    this.header = new HeaderSection(page);
+    this.sideMenuSection = new SideMenuSection(page);
   }
 
   async isGreetingMessageDisplayed(message: string) {

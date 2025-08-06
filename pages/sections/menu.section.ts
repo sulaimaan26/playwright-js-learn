@@ -1,12 +1,12 @@
 import { Locator, Page } from "@playwright/test";
-import { CreateWorkspacePage } from "../create-workspace.page";
-import { WorkspaceSettings } from "../workspace-settings.page";
-import { WorkSpaceHomePage } from "../workspace-home.page";
+import { CreateWorkspacePage } from "../workspace/create-workspace.page";
+import { WorkspaceSettings } from "../workspace/workspace-settings.page";
+import { WorkSpaceHomePage } from "../workspace/workspace-home.page";
 
 export class MenuSection {
-  readonly page: Page;
-  readonly createWorkspace: Locator;
-  readonly settingsButton: Locator;
+  private readonly page: Page;
+  private readonly createWorkspace: Locator;
+  private readonly settingsButton: Locator;
 
   constructor(page: Page) {
     this.page = page;

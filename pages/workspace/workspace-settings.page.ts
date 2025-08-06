@@ -2,10 +2,9 @@ import { expect, Locator, Page } from "@playwright/test";
 import { AlertNotification } from "../../component/alert-notification";
 import { Dropdown } from "../../component/dropdown";
 import { PeopleCount } from "../../enums/workspace/people-count";
-import { HeaderSection } from "./sections/header.section";
+import { WorkSpaceHomePage } from "./workspace-home.page";
 
 export class WorkspaceSettings {
-  public readonly header: HeaderSection;
   private secondDeleteWorkspace: Locator;
   private workSpaceNameField: Locator;
   private companySizeDropdown: Dropdown;
@@ -17,9 +16,9 @@ export class WorkspaceSettings {
   private deleteWorkspaceName: Locator;
   private deleteConfirmationField: Locator;
   private deleteConfirmButton: Locator;
+  private readonly backToWorkSpaceLink: Locator;
 
   constructor(private page: Page) {
-    this.header = new HeaderSection(page);
     this.workSpaceNameField = page.getByRole("textbox", {
       name: "Workspace name",
     });
@@ -43,6 +42,9 @@ export class WorkspaceSettings {
     this.deleteWorkspaceName = page.locator("#workspaceName");
     this.deleteConfirmationField = page.locator("#confirmDelete");
     this.deleteConfirmButton = page.getByRole("button", { name: "Confirm" });
+    this.backToWorkSpaceLink = page.getByRole("link", {
+      name: "Back to workspace",
+    });
   }
 
   async clickDeleteWorkspace() {
@@ -91,5 +93,10 @@ export class WorkspaceSettings {
   async updateWorkspace() {
     await this.updateWorkSpaceButton.click();
     return new AlertNotification(this.page);
+  }
+
+  async backToWorkSpace() {
+    await this.backToWorkSpaceLink.click();
+    return new WorkSpaceHomePage(this.page);
   }
 }

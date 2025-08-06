@@ -15,9 +15,11 @@ test(
   "Check whether user able to create a workspace and delete it",
   { tag: [TestTags.POSITIVE, TestTags.PRIORITY_HIGH, TestTags.EndToEnd] },
   async ({ workspaceHome }) => {
+    const workspaceHomePage = workspaceHome.workspaceHomePage;
+    const defaultWorkspaceName = workspaceHome.defaultWorkSpaceName;
     //creating workspace
     let createWorkspace = await (
-      await workspaceHome.header.clickMenu()
+      await workspaceHomePage.sideMenuSection.openMenu()
     ).clickCreateWorkspace();
     let workspaceName = "temp";
     let peopleCount = PeopleCount.TWO_TEN;
@@ -30,7 +32,7 @@ test(
     );
 
     let workspaceSettings = await (
-      await workspaceHome.header.clickMenu()
+      await workspaceHomePage.sideMenuSection.openMenu()
     ).clickSettingsButton();
 
     //Getting workspace info for future assertion
@@ -52,8 +54,8 @@ test(
 test(
   "Verify logged in user mail displayed in create-workspace page",
   { tag: [TestTags.POSITIVE, TestTags.PRIORITY_MEDIUM] },
-  ({ createWorkspace }) => {
-    createWorkspace.isUserMailDisplayed(getEnv(ENVKEY.EMAIL));
+  async ({ createWorkspace }) => {
+    await createWorkspace.isUserMailDisplayed(getEnv(ENVKEY.EMAIL));
   }
 );
 
@@ -62,25 +64,12 @@ test("Verify whether there is proper message for  a workspace created with dupli
   workspaceSettings,
   page,
 }) => {
-  await page.goto("/");
-
   const workspaceSettingsPage = workspaceSettings.workspaceSettingPage;
   const workspaceName = workspaceSettings.workSpaceName;
-  //creating workspace
-  // let createWorkspace = await (
-  //   await workspaceHome.header.clickMenu()
-  // ).clickCreateWorkspace();
-  // let workspaceName = "duplicate-work" + RandomData.getRandomString(3);
-  // let alertMessage = await createWorkspace.createWorkspace(
-  //   workspaceName,
-  //   PeopleCount.TWO_TEN
-  // );
-  // await alertMessage.isExpectedMessageDisplayed(
-  //   "Workspace created successfully"
-  // );
 
+  const workSpaceHomePage = await workspaceSettingsPage.backToWorkSpace();
   const createWorkspace = await (
-    await workspaceSettingsPage.header.clickMenu()
+    await workSpaceHomePage.sideMenuSection.openMenu()
   ).clickCreateWorkspace();
 
   await createWorkspace.enterWorkspaceName(workspaceName);
@@ -89,18 +78,21 @@ test("Verify whether there is proper message for  a workspace created with dupli
   await createWorkspace.isFieldErrorMessageDisplayed(
     "Workspace URL is already taken!"
   );
-  // await createWorkspace.goBack();
-
-  //post-cleanup
-  //TODO: Convert post-cleanup to API
-  // let workspaceSettings = await (
-  //   await workspaceHome.header.clickMenu()
-  // ).clickSettingsButton();
-  // let deleteAlertMessage = await workspaceSettings.handleDeleteWorkspace(
-  //   workspaceName
-  // );
-  // await deleteAlertMessage.isExpectedMessageDisplayed("Workspace deleted.");
 });
+
+test(
+  "Check whether default project is created with workspace name",
+  { tag: [TestTags.POSITIVE, TestTags.PRIORITY_HIGH, TestTags.EndToEnd] },
+  async ({ workspaceHome }) => {
+    const workspaceHomePage = workspaceHome.workspaceHomePage;
+    const defaultWorkspaceName = workspaceHome.defaultWorkSpaceName;
+
+    let projectPage =
+      await workspaceHomePage.sideMenuSection.clickProjectMenu();
+    //If able to navigate then project exist
+    await projectPage.navigateToProject(defaultWorkspaceName);
+  }
+);
 
 test.describe.parallel("Workspace name validation", () => {
   WorkSpaceNameFieldValidData.forEach((name) => {

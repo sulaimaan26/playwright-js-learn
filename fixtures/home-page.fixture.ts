@@ -11,7 +11,10 @@ import { WorkSpaceService } from "../services/workspace/workspace.service";
 import { AuthProvider } from "../provider/auth.provider";
 
 export const test = base.extend<{
-  workspaceHome: WorkSpaceHomePage;
+  workspaceHome: {
+    workspaceHomePage: WorkSpaceHomePage;
+    defaultWorkSpaceName: string;
+  };
   createWorkspace: CreateWorkspacePage;
   workspaceSettings: {
     workspaceSettingPage: WorkspaceSettings;
@@ -19,7 +22,8 @@ export const test = base.extend<{
   };
 }>({
   workspaceHome: async ({ page }, use) => {
-    await page.goto("/");
+    const defaultWorkSpaceName = getEnv(ENVKEY.DEFAULT_WORKSPACE_NAME);
+    await page.goto(`/${defaultWorkSpaceName}`);
     let loginPage = new LoginPage(page);
     let workSpaceHomePage = await loginPage.login(
       getEnv(ENVKEY.EMAIL),
@@ -27,7 +31,11 @@ export const test = base.extend<{
     );
 
     await workSpaceHomePage.isGreetingMessageDisplayed(getEnv(ENVKEY.USERNAME));
-    await use(workSpaceHomePage);
+    let result = {
+      workspaceHomePage: workSpaceHomePage,
+      defaultWorkSpaceName,
+    };
+    await use(result);
   },
 
   createWorkspace: async ({ page }, use) => {
@@ -41,7 +49,7 @@ export const test = base.extend<{
 
     //navigate to create workspace
     let createWorkspace = await (
-      await workSpaceHomePage.header.clickMenu()
+      await workSpaceHomePage.sideMenuSection.openMenu()
     ).clickCreateWorkspace();
 
     await use(createWorkspace);
@@ -69,13 +77,13 @@ export const test = base.extend<{
 
     //navigate to created workspace
     workSpaceHomePage = await (
-      await workSpaceHomePage.header.clickMenu()
+      await workSpaceHomePage.sideMenuSection.openMenu()
     ).selectWorkSpace(name);
 
     await workSpaceHomePage.isGreetingMessageDisplayed(getEnv(ENVKEY.USERNAME));
 
     let workspaceSettings = await (
-      await workSpaceHomePage.header.clickMenu()
+      await workSpaceHomePage.sideMenuSection.openMenu()
     ).clickSettingsButton();
 
     let result = {
