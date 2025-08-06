@@ -9,7 +9,7 @@ export class SideMenuSection {
 
   constructor(page: Page) {
     this.page = page;
-    this.projectMenu = page.getByRole("link", { name: "Projects" });
+    this.projectMenu = page.getByRole("link", { name: "Projects" }).first();
     this.menuButton = page
       .getByRole("button", { name: "Open workspace switcher" })
       .first();
