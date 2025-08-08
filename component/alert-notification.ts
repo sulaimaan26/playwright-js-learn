@@ -11,6 +11,8 @@ export class AlertNotification {
 
   async isExpectedMessageDisplayed(message: string) {
     await this.alertSection.waitFor({ state: "visible" });
-    await expect(this.page.getByText(message)).toBeVisible();
+    await expect(this.page.getByText(message), {
+      message: "Required message not found ",
+    }).toBeVisible();
   }
 }
