@@ -82,7 +82,7 @@ test("Verify whether there is proper message for  a workspace created with dupli
 
 test(
   "Check whether default project is created with workspace name",
-  { tag: [TestTags.POSITIVE, TestTags.PRIORITY_HIGH, TestTags.EndToEnd] },
+  { tag: [TestTags.POSITIVE, TestTags.PRIORITY_HIGH] },
   async ({ workspaceHome }) => {
     const workspaceHomePage = workspaceHome.workspaceHomePage;
     const defaultWorkspaceName = workspaceHome.defaultWorkSpaceName;

@@ -59,6 +59,7 @@ export class CreateProjectPopup {
 
   async clickClose() {
     await this.closeButton.click();
+    await this.closeButton.waitFor({ state: "hidden" });
     return new ProjectHomePage(this.page);
   }
 }
